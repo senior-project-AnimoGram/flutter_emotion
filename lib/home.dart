@@ -3,6 +3,46 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:tflite/tflite.dart';
 import 'main.dart';
+class SpeechBubbleIcon extends StatelessWidget {
+  final String text;
+
+  SpeechBubbleIcon({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Container(
+          width: 150.0,
+          height: 100.0,
+          decoration: BoxDecoration(
+            shape: BoxShape.rectangle,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20.0),
+              topRight: Radius.circular(20.0),
+              bottomLeft: Radius.circular(0.0),
+              bottomRight: Radius.circular(20.0),
+            ),
+            border: Border.all(color: Colors.black, width: 2.0),
+          ),
+        ),
+        Positioned.fill(
+          child: Align(
+            alignment: Alignment.center,
+            child: Text(
+              text,
+              style: const TextStyle(
+                fontSize: 20.0,
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -12,39 +52,34 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
   bool isWorking = false;
   String result = '';
   CameraController? cameraController;
   CameraImage? imgCamera;
 
-  initCamera()
-  {
-    cameraController = CameraController(cameras![0],ResolutionPreset.medium);
-    cameraController!.initialize().then((value)
-    {
-      if(!mounted){
+  initCamera() {
+    cameraController = CameraController(cameras![0], ResolutionPreset.medium);
+    cameraController!.initialize().then((value) {
+      if (!mounted) {
         return;
       }
 
       setState(() {
-        cameraController!.startImageStream((imageFromStream) =>
-        {
-          if(!isWorking){
-            isWorking = true,
-            imgCamera = imageFromStream,
-            runModelOnStreamFrames(),
-          }
-        });
+        cameraController!.startImageStream((imageFromStream) => {
+              if (!isWorking)
+                {
+                  isWorking = true,
+                  imgCamera = imageFromStream,
+                  runModelOnStreamFrames(),
+                }
+            });
       });
     });
   }
 
-  loadModel()async{
+  loadModel() async {
     await Tflite.loadModel(
-      model:"assets/emotion_model.tflite",
-      labels: "assets/labels.txt"
-    );
+        model: "assets/emotion_model.tflite", labels: "assets/labels.txt");
   }
 
   @override
@@ -54,14 +89,12 @@ class _HomeState extends State<Home> {
     loadModel();
   }
 
-  runModelOnStreamFrames()async{
-    if(imgCamera != null){
+  runModelOnStreamFrames() async {
+    if (imgCamera != null) {
       var recognitions = await Tflite.runModelOnFrame(
-          bytesList: imgCamera!.planes.map((plane)
-          {
-            return plane.bytes;
-          }).toList(),
-
+        bytesList: imgCamera!.planes.map((plane) {
+          return plane.bytes;
+        }).toList(),
         imageHeight: imgCamera!.height,
         imageWidth: imgCamera!.width,
         imageMean: 127.5,
@@ -73,9 +106,11 @@ class _HomeState extends State<Home> {
       );
       result = '';
 
-      recognitions!.forEach((response)
-      {
-        result += response["label"] + "  " + (response["confidence"] as double).toStringAsFixed(2) + "\n\n";
+      recognitions!.forEach((response) {
+        result += response["label"] +
+            "  " +
+            (response["confidence"] as double).toStringAsFixed(2) +
+            "\n\n";
       });
       setState(() {
         result;
@@ -85,7 +120,7 @@ class _HomeState extends State<Home> {
   }
 
   @override
-  void dispose() async{
+  void dispose() async {
     // TODO: implement dispose
     super.dispose();
     await Tflite.close();
@@ -95,73 +130,65 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child:Scaffold(
-          appBar: AppBar(title: Text("Dogs Emotion"),),
-          body: Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage("assets/white.png"),
-                fit: BoxFit.fill,
-              ),
-            ),
-            child: Column(
-              children: [
-                Stack(
-                  children: [
-                    Center(
-                      child: Container(
-                        height: 320.0,
-                        width: 360.0,
-                        child: Image.asset("assets/white.png"),
-                      ),
-                    ),
-                    Center(
-                      child: TextButton(
-                        onPressed: (){
-                          initCamera();
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.only(top:35.0),
-                          height: 270.0,
-                          width: 360.0,
-                          child: imgCamera == null
-                            ?
-                              Container(
-                                height: 270.0,
-                                width: 360.0,
-                                child: Icon(Icons.photo_camera_front,color: Colors.pink,size: 40.0,),
-                              )
-                              :
-                              AspectRatio(
-                                  aspectRatio: cameraController!.value.aspectRatio,
-                                  child: CameraPreview(cameraController!),
-                              ),
-                        )
-                      ),
-                    )
-                  ],
-                ),
-                Center(
-                  child: Container(
-                    margin: EdgeInsets.only(top: 55.0),
-                    child:SingleChildScrollView(
-                      child: Text(
-                        result,
-                        style: const TextStyle(
-                          backgroundColor: Colors.white30,
-                          fontSize: 25.0,
-                          color: Colors.black,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-
-                    )
-                  ),
-                )
-              ],
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Dogs Emotion"),
+        ),
+        body: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/white.png"),
+              fit: BoxFit.fill,
             ),
           ),
+          child: Column(
+            children: [
+              Stack(
+                children: [
+                  Stack(
+                    children: [
+                      Center(
+                        child: TextButton(
+                          onPressed: (){
+                            initCamera();
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.only(top:30.0),
+                            height: MediaQuery.of(context).size.height - 150, // Set the desired height
+                            width: MediaQuery.of(context).size.width, // Set the desired width
+                            child: imgCamera == null
+                                ? Container(
+                              height: 400.0,
+                              width: 480.0,
+                              child: Icon(Icons.photo_camera_front,color: Colors.pink,size: 40.0,),
+                            )
+                                : AspectRatio(
+                              aspectRatio: cameraController!.value.aspectRatio,
+                              child: CameraPreview(cameraController!),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 400.0, // Adjust the bottom value as needed
+                        child: Container(
+                          width: 520.0, // Set the width to match the camera preview width
+                          color: Colors.transparent, // Use a transparent background
+                          child: Center(
+                            child: SingleChildScrollView(
+                              child: SpeechBubbleIcon(text: result),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
+      ),
     );
   }
 }
