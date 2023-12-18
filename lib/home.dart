@@ -3,6 +3,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:tflite/tflite.dart';
 import 'main.dart';
+
 class SpeechBubbleIcon extends StatelessWidget {
   final String text;
 
@@ -53,6 +54,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   bool isWorking = false;
+  bool filterSelected = false;
   String result = '';
   CameraController? cameraController;
   CameraImage? imgCamera;
@@ -100,7 +102,7 @@ class _HomeState extends State<Home> {
         imageMean: 127.5,
         imageStd: 127.5,
         rotation: 90,
-        numResults: 2,
+        numResults: 1,
         threshold: 0.1,
         asynch: true,
       );
@@ -132,58 +134,250 @@ class _HomeState extends State<Home> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Dogs Emotion"),
-        ),
-        body: Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("assets/white.png"),
-              fit: BoxFit.fill,
+          title: Text("Animogram"),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.notifications_none),
+              onPressed: () {
+                // Handle notification button press
+              },
             ),
-          ),
+          ],
+        ),
+        body: Expanded(
           child: Column(
             children: [
               Stack(
                 children: [
-                  Stack(
-                    children: [
-                      Center(
-                        child: TextButton(
-                          onPressed: (){
-                            initCamera();
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.only(top:30.0),
-                            height: MediaQuery.of(context).size.height - 150, // Set the desired height
-                            width: MediaQuery.of(context).size.width, // Set the desired width
-                            child: imgCamera == null
-                                ? Container(
-                              height: 400.0,
-                              width: 480.0,
-                              child: Icon(Icons.photo_camera_front,color: Colors.pink,size: 40.0,),
-                            )
-                                : AspectRatio(
-                              aspectRatio: cameraController!.value.aspectRatio,
-                              child: CameraPreview(cameraController!),
-                            ),
-                          ),
+                  Center(
+                    child: TextButton(
+                      onPressed: () {
+                        initCamera();
+                      },
+                      child: Container(
+                        height: MediaQuery.of(context).size.height - 300,
+                        width: MediaQuery.of(context).size.width,
+                        child: imgCamera == null
+                            ? Container(
+                                height: 400.0,
+                                width: 480.0,
+                                child: const Icon(
+                                  Icons.photo_camera_front,
+                                  color: Colors.pink,
+                                  size: 40.0,
+                                ),
+                              )
+                            : AspectRatio(
+                                aspectRatio:
+                                    cameraController!.value.aspectRatio,
+                                child: CameraPreview(cameraController!),
+                              ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 300.0, // Adjust the bottom value as needed
+                    child: Container(
+                      width:
+                          520.0, // Set the width to match the camera preview width
+                      color: Colors.transparent,
+                      child: Center(
+                        child: SingleChildScrollView(
+                          child: imgCamera != null
+                              ? SpeechBubbleIcon(text: result)
+                              : Container(),
                         ),
                       ),
-                      Positioned(
-                        bottom: 400.0, // Adjust the bottom value as needed
-                        child: Container(
-                          width: 520.0, // Set the width to match the camera preview width
-                          color: Colors.transparent, // Use a transparent background
-                          child: Center(
-                            child: SingleChildScrollView(
-                              child: SpeechBubbleIcon(text: result),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ],
+              ),
+              Visibility(
+                  visible: filterSelected,
+                  child: Container(
+                    width: 400,
+                    height: 120,
+                    color: Colors.black45,
+                    child: Column(children: [
+                      SingleChildScrollView(
+                        child: Row(
+                          children: <Widget>[
+                            SizedBox(width: 20),
+                            InkWell(
+                              onTap: () {},
+                              child: Text(
+                                '내 필터',
+                                style: TextStyle(
+                                    fontSize: 16.0, color: Colors.white),
+                              ),
+                            ),
+                            SizedBox(width: 20),
+                            InkWell(
+                              onTap: () {
+
+                              },
+                              child: Text(
+                                '추천',
+                                style: TextStyle(
+                                    fontSize: 16.0, color: Colors.white),
+                              ),
+                            ),
+                            SizedBox(width: 20),
+                            InkWell(
+                              onTap: () {},
+                              child: Text(
+                                'NEW',
+                                style: TextStyle(
+                                    fontSize: 16.0, color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: <Widget>[
+                            SizedBox(width: 20),
+                            Container(
+                              width: 50,
+                              height: 50,
+                              margin: EdgeInsets.all(5.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.0),
+                                color: Colors
+                                    .white, // You can set a background color if necessary
+                              ),
+                              child: InkWell(
+                                onTap: () {
+                                  // Your button 1 logic here
+                                },
+                                child: Image.asset('assets/trash.png'),
+                              ),
+                            ),
+                            SizedBox(width: 20),
+                            Container(
+                              width: 50,
+                              height: 50,
+                              margin: EdgeInsets.all(5.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.0),
+                                color: Colors
+                                    .white, // You can set a background color if necessary
+                              ),
+                              child: InkWell(
+                                onTap: () {
+                                  // Your button 1 logic here
+                                },
+                                child: Image.asset('assets/restriction.png'),
+                              ),
+                            ),
+                            SizedBox(width: 20),
+                            Container(
+                              width: 50,
+                              height: 50,
+                              margin: EdgeInsets.all(5.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.0),
+                                color: Colors
+                                    .white, // You can set a background color if necessary
+                              ),
+                              child: InkWell(
+                                onTap: () {
+                                  // Your button 1 logic here
+                                },
+                                child: Image.asset('assets/sadSticker.png'),
+                              ),
+                            ),
+                            SizedBox(width: 20),
+                            Container(
+                              width: 50,
+                              height: 50,
+                              margin: EdgeInsets.all(5.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.0),
+                                color: Colors
+                                    .white, // You can set a background color if necessary
+                              ),
+                              child: InkWell(
+                                onTap: () {
+                                  // Your button 1 logic here
+                                },
+                                child: Image.asset('assets/redAngryFilter.png'),
+                              ),
+                            ),
+                            SizedBox(width: 20),
+                            Container(
+                              width: 50,
+                              height: 50,
+                              margin: EdgeInsets.all(5.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.0),
+                                color: Colors
+                                    .white, // You can set a background color if necessary
+                              ),
+                              child: InkWell(
+                                onTap: () {
+                                  // Your button 1 logic here
+                                },
+                                child: Image.asset('assets/happyFace.png'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ]),
+                  )),
+              Positioned(
+                bottom: 10.0, // Adjust the bottom value as needed
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: Size(20.0, 20.0),
+                      ),
+                      child: Icon(Icons.home),
+                    ),
+                    SizedBox(width: 5.0),
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: Size(20.0, 20.0),
+                      ),
+                      child: Icon(Icons.camera_alt),
+                    ),
+                    SizedBox(width: 5.0),
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: Size(20.0, 20.0),
+                      ),
+                      child: Icon(Icons.upload),
+                    ),
+                    SizedBox(width: 5.0),
+                    ElevatedButton(
+                      onPressed: () {
+                        filterSelected = !filterSelected;
+                        setState(() {});
+                      },
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: Size(20.0, 20.0),
+                      ),
+                      child: Icon(Icons.search),
+                    ),
+                    SizedBox(width: 5.0),
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: Size(20.0, 20.0),
+                      ),
+                      child: Icon(Icons.person),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
