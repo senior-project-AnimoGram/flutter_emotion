@@ -58,6 +58,7 @@ class _HomeState extends State<Home> {
   String result = '';
   CameraController? cameraController;
   CameraImage? imgCamera;
+  String? firstResultCharacter;
 
   initCamera() {
     cameraController = CameraController(cameras![0], ResolutionPreset.medium);
@@ -129,6 +130,14 @@ class _HomeState extends State<Home> {
     cameraController?.dispose();
   }
 
+  void saveFirstResultCharacter() {
+    if (result.isNotEmpty) {
+      setState(() {
+        firstResultCharacter = result.substring(0, 1);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -138,9 +147,7 @@ class _HomeState extends State<Home> {
           actions: [
             IconButton(
               icon: Icon(Icons.notifications_none),
-              onPressed: () {
-                // Handle notification button press
-              },
+              onPressed: () {},
             ),
           ],
         ),
@@ -176,10 +183,9 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                   Positioned(
-                    bottom: 300.0, // Adjust the bottom value as needed
+                    bottom: 300.0,
                     child: Container(
-                      width:
-                          520.0, // Set the width to match the camera preview width
+                      width: 520.0,
                       color: Colors.transparent,
                       child: Center(
                         child: SingleChildScrollView(
@@ -204,8 +210,12 @@ class _HomeState extends State<Home> {
                           children: <Widget>[
                             SizedBox(width: 20),
                             InkWell(
-                              onTap: () {},
-                              child: Text(
+                              onTap: () {
+                                setState(() {
+                                  firstResultCharacter = null;
+                                });
+                              },
+                              child: const Text(
                                 '내 필터',
                                 style: TextStyle(
                                     fontSize: 16.0, color: Colors.white),
@@ -214,9 +224,10 @@ class _HomeState extends State<Home> {
                             SizedBox(width: 20),
                             InkWell(
                               onTap: () {
-
+                                saveFirstResultCharacter();
+                                print("char: ${firstResultCharacter!}");
                               },
-                              child: Text(
+                              child: const Text(
                                 '추천',
                                 style: TextStyle(
                                     fontSize: 16.0, color: Colors.white),
@@ -225,7 +236,7 @@ class _HomeState extends State<Home> {
                             SizedBox(width: 20),
                             InkWell(
                               onTap: () {},
-                              child: Text(
+                              child: const Text(
                                 'NEW',
                                 style: TextStyle(
                                     fontSize: 16.0, color: Colors.white),
@@ -246,12 +257,10 @@ class _HomeState extends State<Home> {
                               margin: EdgeInsets.all(5.0),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(5.0),
-                                color: Colors
-                                    .white, // You can set a background color if necessary
+                                color: Colors.white,
                               ),
                               child: InkWell(
                                 onTap: () {
-                                  // Your button 1 logic here
                                 },
                                 child: Image.asset('assets/trash.png'),
                               ),
@@ -263,74 +272,87 @@ class _HomeState extends State<Home> {
                               margin: EdgeInsets.all(5.0),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(5.0),
-                                color: Colors
-                                    .white, // You can set a background color if necessary
+                                color: Colors.white,
                               ),
                               child: InkWell(
-                                onTap: () {
-                                  // Your button 1 logic here
-                                },
+                                onTap: () {},
                                 child: Image.asset('assets/restriction.png'),
                               ),
                             ),
                             SizedBox(width: 20),
-                            Container(
-                              width: 50,
-                              height: 50,
-                              margin: EdgeInsets.all(5.0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5.0),
-                                color: Colors
-                                    .white, // You can set a background color if necessary
+                            if (firstResultCharacter == '0' ||
+                                firstResultCharacter == null)
+                              Container(
+                                width: 50,
+                                height: 50,
+                                margin: EdgeInsets.all(5.0),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  color: Colors.white,
+                                ),
+                                child: InkWell(
+                                  onTap: () {
+                                  },
+                                  child:
+                                      Image.asset('assets/redAngryFilter.png'),
+                                ),
                               ),
-                              child: InkWell(
-                                onTap: () {
-                                  // Your button 1 logic here
-                                },
-                                child: Image.asset('assets/sadSticker.png'),
-                              ),
-                            ),
                             SizedBox(width: 20),
-                            Container(
-                              width: 50,
-                              height: 50,
-                              margin: EdgeInsets.all(5.0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5.0),
-                                color: Colors
-                                    .white, // You can set a background color if necessary
+                            if (firstResultCharacter == '1' ||
+                                firstResultCharacter == null)
+                              Container(
+                                width: 50,
+                                height: 50,
+                                margin: EdgeInsets.all(5.0),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  color: Colors.white,
+                                ),
+                                child: InkWell(
+                                  onTap: () {},
+                                  child: Image.asset('assets/happyFace.png'),
+                                ),
                               ),
-                              child: InkWell(
-                                onTap: () {
-                                  // Your button 1 logic here
-                                },
-                                child: Image.asset('assets/redAngryFilter.png'),
-                              ),
-                            ),
                             SizedBox(width: 20),
-                            Container(
-                              width: 50,
-                              height: 50,
-                              margin: EdgeInsets.all(5.0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5.0),
-                                color: Colors
-                                    .white, // You can set a background color if necessary
+                            if (firstResultCharacter == '2' ||
+                                firstResultCharacter == null)
+                              Container(
+                                width: 50,
+                                height: 50,
+                                margin: EdgeInsets.all(5.0),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  color: Colors.white,
+                                ),
+                                child: InkWell(
+                                  onTap: () {},
+                                  child: Image.asset('assets/relaxedFace.png'),
+                                ),
                               ),
-                              child: InkWell(
-                                onTap: () {
-                                  // Your button 1 logic here
-                                },
-                                child: Image.asset('assets/happyFace.png'),
+                            SizedBox(width: 20),
+                            if (firstResultCharacter == '3' ||
+                                firstResultCharacter == null)
+                              Container(
+                                width: 50,
+                                height: 50,
+                                margin: EdgeInsets.all(5.0),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  color: Colors
+                                      .white,
+                                ),
+                                child: InkWell(
+                                  onTap: () {},
+                                  child: Image.asset('assets/sadSticker.png'),
+                                ),
                               ),
-                            ),
                           ],
                         ),
                       ),
                     ]),
                   )),
               Positioned(
-                bottom: 10.0, // Adjust the bottom value as needed
+                bottom: 10.0,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
