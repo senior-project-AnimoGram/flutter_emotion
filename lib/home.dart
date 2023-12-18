@@ -173,6 +173,7 @@ class _HomeState extends State<Home> {
                                   color: Colors.pink,
                                   size: 40.0,
                                 ),
+
                               )
                             : AspectRatio(
                                 aspectRatio:
